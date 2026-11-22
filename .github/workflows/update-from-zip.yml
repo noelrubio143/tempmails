@@ -1,0 +1,84 @@
+name: Update from ZIP
+
+# Upload a .zip to the repo (root or the "updates" folder) from your phone.
+# This workflow unzips it into the repo, deletes the zip, and commits.
+#
+# - Normal zip      -> files are added/overwritten, everything else is kept.
+# - Name has "full" -> the repo is mirrored to the zip (old files not in the zip are deleted).
+# - DELETE.txt in the zip -> every path listed (one per line) is deleted.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.zip"
+      - "updates/*.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zip-update
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply ZIP updates
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob dotglob
+          zips=(*.zip updates/*.zip)
+          if [ ${#zips[@]} -eq 0 ]; then echo "No zip found"; exit 0; fi
+
+          for z in "${zips[@]}"; do
+            echo "== Applying $z"
+            tmp=$(mktemp -d)
+            unzip -q -o "$z" -d "$tmp"
+            rm -rf "$tmp/__MACOSX"
+
+            entries=("$tmp"/*)
+            if [ ${#entries[@]} -eq 1 ] && [ -d "${entries[0]}" ]; then
+              src="${entries[0]}"
+            else
+              src="$tmp"
+            fi
+
+            if [ -f "$src/DELETE.txt" ]; then
+              while IFS= read -r p || [ -n "$p" ]; do
+                p="${p%$'\r'}"
+                [ -z "$p" ] && continue
+                case "$p" in
+                  /*|*..*|.git|.git/*|.github|.github/*) echo "skip $p"; continue ;;
+                esac
+                rm -rf -- "./$p"
+                echo "deleted $p"
+              done < "$src/DELETE.txt"
+              rm -f "$src/DELETE.txt"
+            fi
+
+            # never let a zip touch these
+            rm -rf "$src/.git" "$src/.github" "$src/node_modules" "$src/.env" "$src/updates"
+            rm -f "$src"/*.zip
+
+            name=$(basename "$z" | tr 'A-Z' 'a-z')
+            if [[ "$name" == *full* ]]; then
+              echo "Full mirror (old files removed)"
+              find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github ! -name node_modules ! -name .env ! -name updates ! -name '*.zip' -exec rm -rf {} +
+            fi
+            cp -a "$src"/. ./
+
+            rm -rf "$tmp"
+            git rm -q -f -- "$z"
+          done
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update from zip" || echo "Nothing to commit"
+          git push
