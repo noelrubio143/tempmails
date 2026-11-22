@@ -61,7 +61,55 @@ pm2 restart ambermail
 ## 3. Open the site
 
 - Website: `https://amberss.site`
-- Admin panel: `https://amberss.site/ops-vault` (open to everyone, no password)
+- Admin panel: `https://amberss.site/ops-vault`
+- If the site shows **ASTRXY DEFENSE GATE**, enter the Master Admin Key (see below)
+
+## Master Admin Key (don't forget!)
+
+The key asked by the "Enter Master Admin Key" screen is `ADMIN_SECRET_KEY` in the `.env` file on the VPS.
+`setup.sh` creates it automatically (random 48 characters).
+
+Show the key:
+
+```bash
+grep ADMIN_SECRET_KEY ~/tempmails/.env
+```
+
+Copy everything after the `=` and paste it in the gate.
+
+Change it to your own key:
+
+```bash
+nano ~/tempmails/.env
+```
+
+Edit the `ADMIN_SECRET_KEY=...` line, save, then restart:
+
+```bash
+pm2 restart ambermail --update-env
+```
+
+Never share this key and never upload `.env` to GitHub.
+
+## If port 80/443 is already used (gomux on this VPS)
+
+On this VPS, `gomux` (pid 495) already uses ports 80 and 443 for the VPN services, so nginx cannot start on them.
+Check who uses the ports:
+
+```bash
+ss -tlnp | grep -E ':80 |:443 '
+```
+
+Fix used: nginx listens on port **8080** instead.
+
+```bash
+sed -i -E 's/listen (\[::\]:)?80( |;)/listen \18080\2/' /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*
+nginx -t && systemctl restart nginx
+```
+
+Open the site at `http://amberss.site:8080` (allow port 8080 in the firewall).
+For `https://amberss.site` without the port, use Cloudflare: orange cloud + Origin Rule rewriting the destination port to 8080 + SSL mode Flexible.
+Certbot will not work on port 8080.
 
 ## Update the app later
 
@@ -89,6 +137,12 @@ Restart the app:
 
 ```bash
 pm2 restart ambermail
+```
+
+If pm2 shows `errored` with "Could not find a production build", build first:
+
+```bash
+cd ~/tempmails && pnpm build && pm2 restart ambermail
 ```
 
 Retry HTTPS if it failed the first time:
