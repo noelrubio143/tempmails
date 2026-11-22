@@ -11,19 +11,24 @@ Next.js temp mail app. Guide below is for running it on a VPS (Ubuntu 22.04 / 24
 
 ## Quick setup (one command)
 
-```bash
-# 1. Upload the zip to the VPS (run on your PC)
-scp astrxytempmail-vps.zip root@YOUR_VPS_IP:/root/
+Repo: https://github.com/noelrubio143/tempmails
 
-# 2. On the VPS
-apt update && apt install -y unzip
-unzip astrxytempmail-vps.zip && cd astrxytempmail-main
+```bash
+# On the VPS (as root)
+apt update && apt install -y git
+git clone https://github.com/noelrubio143/tempmails.git
+cd tempmails
 sudo bash deploy/setup.sh yourdomain.com you@email.com
 
-# 3. Fill in .env, then restart
+# Then fill in .env and restart
 nano .env
 pm2 restart astrxymail
 ```
+
+If the repo is private, clone with a GitHub token:
+`git clone https://noelrubio143:YOUR_TOKEN@github.com/noelrubio143/tempmails.git`
+
+No GitHub? Upload the zip instead: `scp project.zip root@YOUR_VPS_IP:/root/`, then `unzip` it, `cd` into the folder and run the same `setup.sh` command.
 
 ## .env values
 
