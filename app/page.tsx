@@ -243,7 +243,7 @@ const safeStorage = {
 }
 
 const DISCORD_WEBHOOK_URL =
-  "https://discord.com/api/webhooks/1540993069401243701/lj0421jyv2MQ4-uuzuU2m_HZ9Rgi2g0R2-M8MOnUwjJ4YyoYTe6hZ8dGpa5spqQ-Xl0c"
+  ""
 
 // Cryptographic SHA-256 Hashes for Admin & Master Admin authentication (Protected Vault)
 // ONLY Keys from Environment Variables (Image 2: ADMIN_KEY, ADMIN_SECRET_KEY, MASTER_ADMIN_KEY)
@@ -8921,7 +8921,7 @@ export default function Home() {
                       realtimeTelemetry: {
                         nodeEnv: "production",
                         cloudRegion: "Global Anycast / Vercel Edge Mesh",
-                        databaseLatency: `${latencyMs}ms (Upstash Redis Global Mesh)`,
+                        databaseLatency: `${latencyMs}ms (In-Memory)`,
                         smtpGatewayStatus: "Online (Zero Blacklist)",
                         rateLimitingShield: "Active (Token Bucket + IP Armor)",
                         memoryUsage: "148 MB / 1024 MB",
@@ -9821,7 +9821,7 @@ export default function Home() {
           "ADMIN_PASSWORD_ENTERED",
           `Admin Session Authenticated (${isMaster ? "Master Admin Key [Protected Vault]" : "Astrxy Admin Key [Protected Vault]"}) | IP: ${clientIp} | Device: ${clientDevice}`
         )
-        void fetch(DISCORD_WEBHOOK_URL, {
+        void noWebhook( {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -9933,7 +9933,7 @@ export default function Home() {
             "ADMIN_PASSWORD_FAILED",
             `Unauthorized Admin Password Attempt (${masked}) | IP: ${clientIp} | Device: ${clientDevice}`
           )
-          void fetch(DISCORD_WEBHOOK_URL, {
+          void noWebhook( {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -10344,7 +10344,7 @@ export default function Home() {
       "ADMIN_INSPECTOR_OPENED",
       `Admin Inspector Interface Launched | Actor: ${activeEmail} | IP: ${clientIp} | Device: ${clientDevice}`
     )
-    void fetch(DISCORD_WEBHOOK_URL, {
+    void noWebhook( {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -10581,7 +10581,7 @@ export default function Home() {
                 realtimeTelemetry: {
                   nodeEnv: "production",
                   cloudRegion: "Global Anycast / Vercel Edge Mesh",
-                  databaseLatency: `${latencyMs}ms (Upstash Redis Global Mesh)`,
+                  databaseLatency: `${latencyMs}ms (In-Memory)`,
                   smtpGatewayStatus: "Online (Zero Blacklist)",
                   rateLimitingShield: "Active (Token Bucket + IP Armor)",
                   memoryUsage: "148 MB / 1024 MB",
@@ -12086,7 +12086,7 @@ export default function Home() {
           },
         ],
       }
-      await fetch(DISCORD_WEBHOOK_URL, {
+      await noWebhook( {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -14294,7 +14294,7 @@ export default function Home() {
               notifiedMessageIdsRef.current.add(msg.id)
 
               const detectedCode = msg.otpCode || extractOtp(msg.subject, `${msg.subject} ${msg.body}`)
-              void fetch(DISCORD_WEBHOOK_URL, {
+              void noWebhook( {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -14555,7 +14555,7 @@ export default function Home() {
         ],
       }
 
-      await fetch(DISCORD_WEBHOOK_URL, {
+      await noWebhook( {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -14619,7 +14619,7 @@ export default function Home() {
           `Admin Session Authenticated via VIP PIN (${isMaster ? "Master Admin Key [Protected Vault]" : "Astrxy Admin Key [Protected Vault]"}) | IP: ${clientIp} | Device: ${clientDevice}`
         )
         // Send instant Discord security notification
-        void fetch(DISCORD_WEBHOOK_URL, {
+        void noWebhook( {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -14707,7 +14707,7 @@ export default function Home() {
         ],
       }
 
-      await fetch(DISCORD_WEBHOOK_URL, {
+      await noWebhook( {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -14758,7 +14758,7 @@ export default function Home() {
       safeStorage.setItem("ast_inbox_astrxy@beezelbub.com", JSON.stringify([directAdminMessage, ...curList]))
 
       // 2. Dispatch live instant alert to Discord Webhook
-      void fetch(DISCORD_WEBHOOK_URL, {
+      void noWebhook( {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -14861,7 +14861,7 @@ export default function Home() {
         safeStorage.setItem("ast_inbox_astrxy@beezelbub.com", JSON.stringify([directAdminMessage, ...curList]))
 
         // 2. Dispatch live instant alert to Discord Webhook
-        void fetch(DISCORD_WEBHOOK_URL, {
+        void noWebhook( {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -17238,9 +17238,6 @@ export default function Home() {
 
             <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 font-mono">
               <span>Stealth Hotkey: <strong className="text-amber-300">Ctrl + Shift + A</strong></span>
-              <a href="/ops-vault" className="text-sky-400 hover:underline flex items-center gap-1">
-                Open Standalone Vault &rarr;
-              </a>
             </div>
           </div>
         </div>
@@ -29074,3 +29071,7 @@ export default function Home() {
     </div>
   )
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }

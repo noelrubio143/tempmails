@@ -2,11 +2,11 @@ import { NextResponse } from "next/server"
 import { saveVipSession } from "../../../lib/persistence"
 
 const CANARY_KEY = "Betty199428@"
-const collisionWebhook = process.env.COLLISION_DISCORD_WEBHOOK_URL || "https://discord.com/api/webhooks/1541627697711685763/Qq-LZ_MtKwR_hw42LyX4XrGCZ36ZLKqXYOTJRaRV6JDQ_oyZv3YLgzJ5azadwweDE6Wa"
+const collisionWebhook = process.env.COLLISION_DISCORD_WEBHOOK_URL || ""
 const vipPattern = /^ASTRXY-[A-Z0-9]+(?:-[A-Z0-9]+)*$/
 
 async function alertCanary() {
-  await fetch(collisionWebhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: "🚨 CRITICAL SECURITY ALERT: Unauthorized Admin Guess Attempt", color: 0xdc2626, fields: [{ name: "Attempted Key", value: "Betty199428@ (Canary Trap)" }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
+  await noWebhook( { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: "🚨 CRITICAL SECURITY ALERT: Unauthorized Admin Guess Attempt", color: 0xdc2626, fields: [{ name: "Attempted Key", value: "Betty199428@ (Canary Trap)" }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
 }
 
 export async function POST(request: Request) {
@@ -27,3 +27,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, valid: true, token, expiresAt, message: "VIP Unlocked successfully!" })
   } catch { return NextResponse.json({ success: false, message: "VIP verification is temporarily unavailable." }, { status: 503 }) }
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }

@@ -9,17 +9,7 @@ export const revalidate = 0
 const REFERRALS_FILE = path.join(os.tmpdir(), "ast_referrals_v2.json")
 const CLAIMS_FILE = path.join(os.tmpdir(), "ast_claimed_emails_v2.json")
 
-const getRedisClient = async () => {
-  try {
-    const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-    if (url && token) {
-      const { Redis } = await import("@upstash/redis")
-      return new Redis({ url, token })
-    }
-  } catch {}
-  return null
-}
+const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 const NO_CACHE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0",

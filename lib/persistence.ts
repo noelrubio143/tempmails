@@ -1,4 +1,3 @@
-import { Redis } from "@upstash/redis"
 
 export type MailboxRecord = { email: string; secretKey: string; claimedAt: string }
 export type StoredMessage = Record<string, unknown>
@@ -6,11 +5,8 @@ export type StoredMessage = Record<string, unknown>
 const memory = globalThis as typeof globalThis & { __astrxyStore?: Map<string, unknown> }
 memory.__astrxyStore ??= new Map<string, unknown>()
 
-function redisClient() {
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
-  return url && token ? new Redis({ url, token }) : null
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function redisClient(): any { return null } // Upstash removed: memory only
 
 async function get<T>(key: string): Promise<T | null> {
   const redis = redisClient()

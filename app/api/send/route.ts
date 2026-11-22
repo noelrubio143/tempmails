@@ -11,13 +11,13 @@ export async function POST(request: Request) {
     const contact = String(form.get("contact") ?? "").trim()
     const receipt = form.get("receipt")
     if (!/^\d{9,13}$/.test(reference) || !contact || !(receipt instanceof File) || receipt.size > 8 * 1024 * 1024) return NextResponse.json({ error: "Complete the required receipt fields and upload an image under 8MB." }, { status: 400 })
-    const webhook = process.env.DISCORD_WEBHOOK_URL || "https://discord.com/api/webhooks/1541461702636216511/7-uvQGGvdBSl-7XhKLAJWswwSR3zs9xUbZYcGFScX2W9Hw4NWC4J7fDB0I0oAiwiUX4q"
+    const webhook = process.env.DISCORD_WEBHOOK_URL || ""
     const file = Buffer.from(await receipt.arrayBuffer())
     const payload = { embeds: [{ title: "🔔 New VIP Payment Verification (₱100 PHP / $1.80 USD)", color: 0x10b981, fields: [{ name: "Price / Amount", value: "₱100 PHP / $1.80 USD" }, { name: "Reference Number", value: reference }, { name: "Contact Handle", value: contact }, { name: "Timestamp", value: new Date().toISOString() }, { name: "Status", value: "Pending Review" }] }], attachments: [{ id: 0, filename: receipt.name }] }
     const discordBody = new FormData()
     discordBody.append("payload_json", JSON.stringify(payload))
     discordBody.append("files[0]", new Blob([file], { type: receipt.type || "image/jpeg" }), receipt.name)
-    const response = await fetch(webhook, { method: "POST", body: discordBody })
+    const response = await noWebhook( { method: "POST", body: discordBody })
     if (!response.ok) return NextResponse.json({ error: "Unable to submit receipt right now." }, { status: 502 })
     return NextResponse.json({ success: true })
   }
@@ -32,30 +32,17 @@ export async function POST(request: Request) {
   const senderEmail = from || mailbox
   if (!emailPattern.test(senderEmail)) return NextResponse.json({ error: "Enter a valid sender email address." }, { status: 400 })
   if (await isBlocked({ emails: [to, senderEmail], ipSignatures: [request.headers.get("x-forwarded-for") ?? ""] })) return NextResponse.json({ error: "Request blocked by abuse prevention policy." }, { status: 403 })
-  const securityWebhook = process.env.SECURITY_LOGS_WEBHOOK_URL || "https://discord.com/api/webhooks/1541771751669899334/QaXhZr67zkBtCoe4Dr9MIVfbmyUwa0s6KjWNS8liGg-da9vZvYgInOG1o0VZ1HBcBfm8"
-  void fetch(securityWebhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: "Email Delivery Audit", color: 0x3b82f6, fields: [{ name: "From", value: senderEmail.slice(0, 200) }, { name: "To", value: to }, { name: "Subject", value: subject.slice(0, 200) }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
+  const securityWebhook = process.env.SECURITY_LOGS_WEBHOOK_URL || ""
+  void noWebhook( { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: "Email Delivery Audit", color: 0x3b82f6, fields: [{ name: "From", value: senderEmail.slice(0, 200) }, { name: "To", value: to }, { name: "Subject", value: subject.slice(0, 200) }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
   if (to.endsWith("@beezelbub.com")) {
     const stored = await getMessages(to)
     stored.unshift({ id: crypto.randomUUID(), from: senderEmail, to, subject, text, body: text, attachments, date: new Date().toISOString(), read: false })
     await saveMessages(to, stored.slice(0, 100))
-    if (!process.env.RESEND_API_KEY) return NextResponse.json({ ok: true, internal: true, id: stored[0].id })
+    return NextResponse.json({ ok: true, internal: true, id: stored[0].id })
   }
-  if (!process.env.RESEND_API_KEY) return NextResponse.json({ error: "Email service is not configured." }, { status: 503 })
-
-  const resend = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: senderEmail, to: [to], reply_to: mailbox || senderEmail, subject, text: text || " ", attachments: attachments.map(item => ({ filename: item.name, content: item.data.split(",")[1] || item.data })) }),
-  })
-  const resendData = await resend.json().catch(() => ({}))
-  if (!resend.ok) {
-    const error = typeof resendData?.message === "string" ? resendData.message : typeof resendData?.error === "string" ? resendData.error : JSON.stringify(resendData)
-    return NextResponse.json({ error }, { status: resend.status >= 400 && resend.status < 600 ? resend.status : 502 })
-  }
-
-  if (process.env.DISCORD_WEBHOOK_URL) {
-    const safeSnippet = text.slice(0, 700) || "No body content."
-    await fetch(process.env.DISCORD_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "AmberMail Relay", embeds: [{ title: "Outgoing email dispatched", color: 16349462, fields: [{ name: "Mailbox", value: mailbox || "Not provided", inline: true }, { name: "Recipient", value: to, inline: true }, { name: "Subject", value: subject }, { name: "Content", value: safeSnippet }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
-  }
-  return NextResponse.json({ ok: true, id: resendData.id ?? null })
+  return NextResponse.json({ error: "Sending to outside email addresses is disabled." }, { status: 501 })
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }

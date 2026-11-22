@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-const DEFAULT_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1541780369530032169/U3AtrUHs3y4G3F5zCqetxm4b2NvqECLr96WXBQBrJV_sO880eceZI0AZ_xpfNTNe829X"
+const DEFAULT_DISCORD_WEBHOOK = ""
 
 export async function POST(req: Request) {
   try {
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         ],
       }
 
-      await fetch(webhookUrl, {
+      await noWebhook( {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -70,3 +70,7 @@ export async function POST(req: Request) {
     )
   }
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }

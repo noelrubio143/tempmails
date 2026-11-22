@@ -30,19 +30,7 @@ const NO_CACHE_HEADERS = {
   "Surrogate-Control": "no-store",
 }
 
-const getRedisClient = async () => {
-  try {
-    const rawUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-    const rawToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-    if (rawUrl && rawToken) {
-      const url = rawUrl.trim().replace(/^["']|["']$/g, "")
-      const token = rawToken.trim().replace(/^["']|["']$/g, "")
-      const { Redis } = await import("@upstash/redis")
-      return new Redis({ url, token })
-    }
-  } catch {}
-  return null
-}
+const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 export async function GET() {
   let current: string | null = null

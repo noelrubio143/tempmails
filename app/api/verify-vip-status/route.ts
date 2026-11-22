@@ -56,17 +56,7 @@ const savePersistedVips = (map: Map<string, VipRecord>) => {
   } catch {}
 }
 
-const getRedisClient = async () => {
-  try {
-    const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-    if (url && token) {
-      const { Redis } = await import("@upstash/redis")
-      return new Redis({ url, token })
-    }
-  } catch {}
-  return null
-}
+const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 const g = globalThis as unknown as { __ast_vip_registry?: GlobalVipRegistry }
 

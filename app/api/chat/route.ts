@@ -415,7 +415,8 @@ function resolveRedisCredentials() {
   return { url, token }
 }
 
-const { url: KV_REST_URL, token: KV_REST_TOKEN } = resolveRedisCredentials()
+const KV_REST_URL = ""
+const KV_REST_TOKEN = ""
 
 async function executeRedisRestCommand(command: string, ...args: (string | number | boolean)[]) {
   if (!KV_REST_URL || !KV_REST_TOKEN) return null
@@ -502,113 +503,7 @@ const reloadLocalChatFile = (store: ChatStore) => {
   } catch {}
 }
 
-const getRedisClient = async () => {
-  if (KV_REST_URL && KV_REST_TOKEN) {
-    // Try Upstash SDK if available, else use universal REST client
-    try {
-      const { Redis } = await import("@upstash/redis")
-      return new Redis({ url: KV_REST_URL, token: KV_REST_TOKEN })
-    } catch {
-      // Return universal REST client (zero external packages required)
-      return {
-        async get(key: string) {
-          return executeRedisRestCommand("get", key)
-        },
-        async set(key: string, value: any) {
-          const valStr = typeof value === "string" ? value : JSON.stringify(value)
-          return executeRedisRestCommand("set", key, valStr)
-        },
-        async del(...keys: string[]) {
-          if (keys.length === 0) return 0
-          return executeRedisRestCommand("del", ...keys)
-        },
-        async smembers(key: string) {
-          const res = await executeRedisRestCommand("smembers", key)
-          return Array.isArray(res) ? res : []
-        },
-        async sadd(key: string, ...members: (string | number)[]) {
-          if (members.length === 0) return 0
-          return executeRedisRestCommand("sadd", key, ...members)
-        },
-        async srem(key: string, ...members: (string | number)[]) {
-          if (members.length === 0) return 0
-          return executeRedisRestCommand("srem", key, ...members)
-        },
-        async sismember(key: string, member: string | number) {
-          const res = await executeRedisRestCommand("sismember", key, member)
-          return res === 1 || res === true ? 1 : 0
-        },
-        async hgetall(key: string) {
-          const res = await executeRedisRestCommand("hgetall", key)
-          if (res && typeof res === "object" && !Array.isArray(res)) return res
-          if (Array.isArray(res)) {
-            const obj: Record<string, any> = {}
-            for (let i = 0; i < res.length; i += 2) {
-              obj[res[i]] = res[i + 1]
-            }
-            return obj
-          }
-          return null
-        },
-        async hget(key: string, field: string) {
-          return executeRedisRestCommand("hget", key, field)
-        },
-        async hset(key: string, ...args: any[]) {
-          if (args.length === 1 && typeof args[0] === "object" && args[0] !== null) {
-            const flattened: any[] = []
-            for (const [k, v] of Object.entries(args[0])) {
-              flattened.push(k, typeof v === "string" ? v : JSON.stringify(v))
-            }
-            if (flattened.length === 0) return 0
-            return executeRedisRestCommand("hset", key, ...flattened)
-          }
-          return executeRedisRestCommand("hset", key, ...args)
-        },
-        async hdel(key: string, field: string) {
-          return executeRedisRestCommand("hdel", key, field)
-        },
-        async hsetnx(key: string, field: string, value: any) {
-          const valStr = typeof value === "string" ? value : JSON.stringify(value)
-          return executeRedisRestCommand("hsetnx", key, field, valStr)
-        },
-        async hexists(key: string, field: string) {
-          const res = await executeRedisRestCommand("hexists", key, field)
-          return res === 1 || res === true ? 1 : 0
-        },
-        async lrange(key: string, start: number, stop: number) {
-          const res = await executeRedisRestCommand("lrange", key, start, stop)
-          return Array.isArray(res) ? res : []
-        },
-        async lpush(key: string, ...values: any[]) {
-          if (values.length === 0) return 0
-          const serialized = values.map((v) => (typeof v === "string" ? v : JSON.stringify(v)))
-          return executeRedisRestCommand("lpush", key, ...serialized)
-        },
-        async lrem(key: string, count: number, value: any) {
-          const valStr = typeof value === "string" ? value : JSON.stringify(value)
-          return executeRedisRestCommand("lrem", key, count, valStr)
-        },
-        async ltrim(key: string, start: number, stop: number) {
-          return executeRedisRestCommand("ltrim", key, start, stop)
-        },
-        async incr(key: string) {
-          return executeRedisRestCommand("incr", key)
-        },
-        async zadd(key: string, ...args: any[]) {
-          if (args.length === 1 && typeof args[0] === "object") {
-            return executeRedisRestCommand("zadd", key, (args[0] as any).score, (args[0] as any).member)
-          }
-          return executeRedisRestCommand("zadd", key, ...args)
-        },
-        async zrevrange(key: string, start: number, stop: number, ...options: string[]) {
-          const res = await executeRedisRestCommand("zrevrange", key, start, stop, ...options)
-          return Array.isArray(res) ? res : []
-        },
-      }
-    }
-  }
-  return null
-}
+const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 const g = globalThis as unknown as { __ast_chat_store?: ChatStore }
 

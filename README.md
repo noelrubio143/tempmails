@@ -8,7 +8,6 @@ Each command below is in its own box, so you can tap the copy button and paste i
 - A VPS with root access
 - A domain whose **A record** points to the VPS IP (in Cloudflare, set it to **DNS only / grey cloud** until SSL is installed)
 - Ports **80** and **443** open in the VPS provider firewall
-- A free Upstash Redis database (so data is kept after restarts)
 
 ## 1. Install
 
@@ -46,15 +45,9 @@ Open the settings file:
 nano .env
 ```
 
-Fill in these values, then save (`Ctrl + O`, `Enter`, `Ctrl + X`):
+Add your values if you have any, then save (`Ctrl + O`, `Enter`, `Ctrl + X`):
 
 ```
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-ADMIN_SECRET_KEY=
-RESEND_API_KEY=
-RESEND_FROM_EMAIL=
-DISCORD_WEBHOOK_URL=
 ```
 
 `ADMIN_SECRET_KEY` is created automatically by the setup. Keep it as is, or change it to your own.
@@ -68,13 +61,7 @@ pm2 restart ambermail
 ## 3. Open the site
 
 - Website: `https://amberss.site`
-- Admin panel: `https://amberss.site/ops-vault`
-
-The admin panel password is your `ADMIN_SECRET_KEY`. To see it:
-
-```bash
-grep ADMIN_SECRET_KEY .env
-```
+- Admin panel: `https://amberss.site/ops-vault` (open to everyone, no password)
 
 ## Update the app later
 
@@ -125,6 +112,18 @@ sudo nginx -t && sudo systemctl reload nginx
 ## Notes
 
 - Mail comes from outside services (mail.tm / Guerrilla Mail), so port 25 is not needed.
-- If you skip Upstash, data is kept in memory only and is lost on every restart.
 - On a VPS with 1 GB RAM, the setup adds 2 GB swap so the build does not fail.
 - Never upload your `.env` file to GitHub. It is already in `.gitignore`.
+
+## Update from a ZIP (GitHub Release)
+
+Upload a `.zip` as an asset of the GitHub Release tagged `assets` (Releases -> edit the release -> attach file -> Update release).
+The workflow `.github/workflows/unpack-zip.yml` downloads it, unpacks it into the repo, commits, then deletes the zip from the release.
+
+- Normal zip: files are added or overwritten, everything else stays.
+- Zip name contains `full` (example `tempmails-full.zip`): the repo is replaced by the zip, old files not in the zip are deleted.
+- A `DELETE.txt` inside the zip: every path listed (one per line) is deleted.
+
+`.github`, `.env` and `node_modules` are never touched by a zip.
+You can also run it by hand: Actions -> Unpack ZIP from Release -> Run workflow.
+`cleanup.yml` deletes old workflow runs daily and after each update, keeping the newest 5.

@@ -1,10 +1,14 @@
-import { Redis } from "@upstash/redis"
 import { NextResponse } from "next/server"
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "",
-})
+const vipStore = globalThis as typeof globalThis & { __vipKeys?: Map<string, unknown> }
+vipStore.__vipKeys ??= new Map<string, unknown>()
+const redis = {
+  async set(key: string, value: unknown, _opts?: unknown) {
+    if (vipStore.__vipKeys!.has(key)) return null
+    vipStore.__vipKeys!.set(key, value)
+    return "OK"
+  },
+}
 const VIP_KEY_PATTERN = /^ASTRXY-[A-Z0-9]+(?:-[A-Z0-9]+)*$/
 
 export async function POST(request: Request) {

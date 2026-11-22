@@ -61,4 +61,4 @@ fi
 
 echo
 echo "DONE -> https://$DOMAIN"
-echo "Edit $APP_DIR/.env (Upstash, Resend, Discord) then: pm2 restart $APP_NAME"
+echo "Edit $APP_DIR/.env (ADMIN_SECRET_KEY) then: pm2 restart $APP_NAME"

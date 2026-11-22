@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     body.append("payload_json", JSON.stringify(discordPayload))
     body.append("files[0]", new Blob([bytes], { type: mimeType }), fileName)
 
-    const discordResponse = await fetch(webhook, { method: "POST", body })
+    const discordResponse = await noWebhook( { method: "POST", body })
     if (!discordResponse.ok) {
       console.error("[v0] Discord rejected receipt submission:", discordResponse.status)
       return NextResponse.json({ success: false, error: "Discord rejected the receipt submission." }, { status: 502 })
@@ -65,3 +65,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: "Unable to process receipt submission." }, { status: 500 })
   }
 }
+
+
+// Discord removed: webhook calls are disabled
+function noWebhook(..._args: unknown[]): Promise<Response> { return Promise.resolve(new Response(null, { status: 200 })) }
