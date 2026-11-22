@@ -1,0 +1,89 @@
+name: Unpack ZIP from Release
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: unpack-zip
+  cancel-in-progress: false
+
+env:
+  TAG: assets
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack zip assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob dotglob
+
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
+            --jq '[.assets[] | select(.name | test("\\.zip$"; "i"))] | sort_by(.created_at)[] | "\(.id)\t\(.name)"' \
+            > /tmp/assets.txt 2>/dev/null || { echo "No release with tag $TAG"; exit 0; }
+          if [ ! -s /tmp/assets.txt ]; then echo "No zip assets"; exit 0; fi
+
+          mkdir -p /tmp/dl
+          while IFS=$'\t' read -r -u 3 id name; do
+            echo "== Applying $name"
+            zipfile="/tmp/dl/$name"
+            gh api -H "Accept: application/octet-stream" "repos/$GITHUB_REPOSITORY/releases/assets/$id" > "$zipfile"
+
+            tmp=$(mktemp -d)
+            unzip -q -o "$zipfile" -d "$tmp"
+            rm -rf "$tmp/__MACOSX"
+
+            entries=("$tmp"/*)
+            if [ ${#entries[@]} -eq 1 ] && [ -d "${entries[0]}" ]; then
+              src="${entries[0]}"
+            else
+              src="$tmp"
+            fi
+
+            if [ -f "$src/DELETE.txt" ]; then
+              while IFS= read -r p || [ -n "$p" ]; do
+                p="${p%$'\r'}"
+                [ -z "$p" ] && continue
+                case "$p" in
+                  /*|*..*|.git|.git/*|.github|.github/*) echo "skip $p"; continue ;;
+                esac
+                rm -rf -- "./$p"
+                echo "deleted $p"
+              done < "$src/DELETE.txt"
+              rm -f "$src/DELETE.txt"
+            fi
+
+            rm -rf "$src/.git" "$src/.github" "$src/node_modules" "$src/.env"
+
+            lname=$(echo "$name" | tr 'A-Z' 'a-z')
+            if [[ "$lname" == *full* ]]; then
+              echo "Full mirror (old files removed)"
+              find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github ! -name node_modules ! -name .env -exec rm -rf {} +
+            fi
+            cp -a "$src"/. ./
+            rm -rf "$tmp" "$zipfile"
+          done 3< /tmp/assets.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update from release zip" || echo "Nothing to commit"
+          git push
+
+          while IFS=$'\t' read -r -u 3 id name; do
+            echo "Deleting asset $name"
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/assets/$id" --silent || true
+          done 3< /tmp/assets.txt
