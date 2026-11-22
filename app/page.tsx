@@ -4122,7 +4122,7 @@ export default function Home() {
   const [claimedAddress, setClaimedAddress] = useState("")
   const [claimedKey, setClaimedKey] = useState("")
   const [customPrefix, setCustomPrefix] = useState<string>("")
-  const DOMAIN = "beezelbub.com"
+  const DOMAIN = "amberss.site"
   const [copied, setCopied] = useState(false)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
   const [themeMode, setThemeMode] = useState<"dark" | "light">(() => {
