@@ -30,10 +30,10 @@ Go into the folder:
 cd tempmails
 ```
 
-Run the automatic setup (replace `yourdomain.com` and `you@email.com`):
+Run the automatic setup (replace `you@email.com` with your email, used for the HTTPS certificate):
 
 ```bash
-sudo bash deploy/setup.sh yourdomain.com you@email.com
+sudo bash deploy/setup.sh amberss.site you@email.com
 ```
 
 This installs Node, pnpm, pm2 and nginx, builds the app, starts it, and sets up HTTPS.
@@ -67,8 +67,8 @@ pm2 restart ambermail
 
 ## 3. Open the site
 
-- Website: `https://yourdomain.com`
-- Admin panel: `https://yourdomain.com/ops-vault`
+- Website: `https://amberss.site`
+- Admin panel: `https://amberss.site/ops-vault`
 
 The admin panel password is your `ADMIN_SECRET_KEY`. To see it:
 
@@ -107,7 +107,7 @@ pm2 restart ambermail
 Retry HTTPS if it failed the first time:
 
 ```bash
-sudo certbot --nginx -d yourdomain.com
+sudo certbot --nginx -d amberss.site
 ```
 
 Test and reload nginx:
