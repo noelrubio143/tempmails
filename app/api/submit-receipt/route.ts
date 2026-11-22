@@ -46,7 +46,7 @@ export async function POST(request: Request) {
           { name: "Timestamp & Amount", value: `${new Date().toISOString()}\n₱100 PHP / $1.80 USD`, inline: false },
         ],
         image: { url: `attachment://${fileName}` },
-        footer: { text: "ASTRXY Temp Mail • VIP Review" },
+        footer: { text: "AMBER Temp Mail • VIP Review" },
       }],
       attachments: [{ id: 0, filename: fileName }],
     }

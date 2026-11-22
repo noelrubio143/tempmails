@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   if (action === "check_email") url.searchParams.set("seq", "0")
 
   try {
-    const response = await fetch(url, { headers: { "User-Agent": "AstrxyMail/2.0" }, cache: "no-store" })
+    const response = await fetch(url, { headers: { "User-Agent": "AmberMail/2.0" }, cache: "no-store" })
     const data = await response.json()
     return NextResponse.json(data, { status: response.ok ? 200 : response.status })
   } catch (error) {

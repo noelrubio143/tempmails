@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# One-shot VPS setup for AstrxyMail (Ubuntu 22.04/24.04)
+# One-shot VPS setup for AmberMail (Ubuntu 22.04/24.04)
 # Usage (from project folder, as root):  bash deploy/setup.sh yourdomain.com [email-for-ssl]
 set -euo pipefail
 
 DOMAIN="${1:-}"
 SSL_EMAIL="${2:-}"
-APP_NAME="astrxymail"
+APP_NAME="ambermail"
 PORT=3000
 APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 

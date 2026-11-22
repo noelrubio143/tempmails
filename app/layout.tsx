@@ -6,22 +6,22 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://astrxytempmail.beezelbub.com/"),
-  title: "ASTRXY Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
+  title: "AMBER Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
   description: "Fast, secure, and private temporary email service. Generate instant disposable inboxes, receive OTP verification codes, and send outbound emails anonymously.",
-  keywords: ["temp mail", "disposable email", "anonymous email", "temporary inbox", "receive otp", "fake email generator", "outbound temp mail", "astrxy temp mail"],
+  keywords: ["temp mail", "disposable email", "anonymous email", "temporary inbox", "receive otp", "fake email generator", "outbound temp mail", "amber temp mail"],
   alternates: { canonical: "https://astrxytempmail.beezelbub.com/" },
   robots: { index: true, follow: true },
   other: { "sitemap": "https://astrxytempmail.beezelbub.com/sitemap.xml" },
   openGraph: {
     type: "website",
     url: "https://astrxytempmail.beezelbub.com/",
-    title: "ASTRXY Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
+    title: "AMBER Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
     description: "Fast, secure, and private temporary email service. Generate instant disposable inboxes, receive OTP verification codes, and send outbound emails anonymously.",
-    siteName: "ASTRXY Temp Mail",
+    siteName: "AMBER Temp Mail",
   },
   twitter: {
     card: "summary",
-    title: "ASTRXY Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
+    title: "AMBER Temp Mail - Instant Disposable Temporary Email & VIP Outbound Dispatch",
     description: "Fast, secure, and private temporary email service. Generate instant disposable inboxes, receive OTP verification codes, and send outbound emails anonymously.",
   },
 }

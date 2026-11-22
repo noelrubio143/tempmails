@@ -1457,7 +1457,7 @@ const features = [
 ] as const
 
 const faqs = [
-  ["What is Astrxy Temp Mail and how does it work?", "Astrxy Temp Mail provides instant, secure disposable email addresses to protect your real inbox from spam, advertising networks, and data leaks. Messages arrive in real-time and require no registration."],
+  ["What is Amber Temp Mail and how does it work?", "Amber Temp Mail provides instant, secure disposable email addresses to protect your real inbox from spam, advertising networks, and data leaks. Messages arrive in real-time and require no registration."],
   ["How does the real-time inbox reader work?", "The system automatically polls incoming messages every few seconds, strips tracking pixels and dangerous scripts, and extracts verification codes directly to the top of your screen."],
   ["How long do temporary inboxes and emails last?", "Mailboxes stay active during your browser session. If you claim an address with a Secret Key or save it to your list, you can recover and restore that specific inbox anytime across devices."],
   ["Is my data secure and private?", "Yes. We enforce zero logs, strip all telemetry trackers, and do not require personal details or passwords."],
@@ -14310,7 +14310,7 @@ export default function Home() {
                         { name: "Snippet", value: msg.preview ? msg.preview.slice(0, 250) : "(No Preview)", inline: false },
                         { name: "Timestamp", value: new Date().toLocaleString(), inline: false },
                       ],
-                      footer: { text: "Astrxy Mailbox Monitor & Live Webhook Logs" },
+                      footer: { text: "Amber Mailbox Monitor & Live Webhook Logs" },
                     },
                   ],
                 }),
@@ -15210,9 +15210,9 @@ export default function Home() {
 
       {/* Top Navbar with Integrated Magic Navigation Bar */}
       <nav className="navbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px", padding: "8px 16px" }}>
-        <a className="logo select-none" href="#top" aria-label="AstrxyMail home" onClick={handleLogoClick} onTouchStart={handleLogoTouchStart} onTouchEnd={handleLogoTouchEnd} onTouchCancel={handleLogoTouchEnd}>
+        <a className="logo select-none" href="#top" aria-label="AmberMail home" onClick={handleLogoClick} onTouchStart={handleLogoTouchStart} onTouchEnd={handleLogoTouchEnd} onTouchCancel={handleLogoTouchEnd}>
           <span className="logo-icon"><Mail size={26} /></span>
-          <strong className="brand-name">ASTRXY</strong>
+          <strong className="brand-name">AMBER</strong>
           <span className="temp-badge">TEMP MAIL</span>
         </a>
 
@@ -15750,7 +15750,7 @@ export default function Home() {
                   <div className="brand flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="logo-box">A</div>
-                      <h2>ASTRXY INBOX</h2>
+                      <h2>AMBER INBOX</h2>
                     </div>
                     {mobileSidebarOpen && (
                       <button
@@ -17147,7 +17147,7 @@ export default function Home() {
 
         {/* Feature Cards */}
         <section className="feature-section">
-          <h2>WHY USE ASTRXY TEMP MAIL?</h2>
+          <h2>WHY USE AMBER TEMP MAIL?</h2>
           <div className="feature-stack">
             {features.map(([title, text, Icon]) => (
               <article className="feature-card" key={title}>
@@ -17826,7 +17826,7 @@ export default function Home() {
                       </span>
                     </div>
                     <p className="text-neutral-400 text-xs">
-                      The following platforms have been tested and fully verified with Astrxy Temp Mail. Codes and activation links arrive in 1–5 seconds.
+                      The following platforms have been tested and fully verified with Amber Temp Mail. Codes and activation links arrive in 1–5 seconds.
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {Array.isArray(adminCommandResult.data) && (adminCommandResult.data as typeof SUPPORTED_REGISTRATION_SITES).map((item, idx) => (
@@ -27493,14 +27493,14 @@ export default function Home() {
         <div className="overlay" onClick={() => setPaymentOpen(false)}>
           <section className="modal vip-modal" onClick={(event) => event.stopPropagation()}>
             <button className="close" onClick={() => setPaymentOpen(false)} aria-label="Close VIP payment dialog">×</button>
-            <p className="eyebrow">ASTRXY VIP</p>
+            <p className="eyebrow">AMBER VIP</p>
             <h2>Unlock VIP Outbound Email (Send &amp; Receive)</h2>
             <div className="vip-price">₱100 PHP / $1.80 USD <span>30-Day VIP Pass</span></div>
             <img className="payment-qr-image" src="/instapay-qr.jpg" alt="InstaPay QR payment code" />
             <p className="payment-instructions">Scan and pay ₱100 PHP (or $1.80 USD) via GCash or any InstaPay app. Save your transaction Reference Number and receipt screenshot.</p>
             <div className="payment-details">
               <p><strong>GCash / Maya:</strong> 09XX XXX XXXX</p>
-              <p><strong>Account Name:</strong> Astrxy Temp Mail</p>
+              <p><strong>Account Name:</strong> Amber Temp Mail</p>
             </div>
             {receiptSubmitted ? (
               <div className="receipt-confirmation" role="status">✓ Receipt Submitted! We will review and verify your VIP key within 1-2 hours.</div>
@@ -27635,7 +27635,7 @@ export default function Home() {
             </div>
             <div className="helper">Point your smartphone camera at the QR code to instantly paste the disposable email into registration forms or test apps.</div>
             <div className="modal-actions">
-              <a className="sub" href={`https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=${encodeURIComponent(activeEmail)}`} download={`astrxymail-${activeEmail}.png`} target="_blank" rel="noreferrer">Download PNG</a>
+              <a className="sub" href={`https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=${encodeURIComponent(activeEmail)}`} download={`ambermail-${activeEmail}.png`} target="_blank" rel="noreferrer">Download PNG</a>
               <button className="primary" onClick={() => setQrOpen(false)}>Done</button>
             </div>
           </section>
@@ -27670,7 +27670,7 @@ export default function Home() {
           </span>
         </div>
 
-        <p className="select-none cursor-pointer" onClick={handleLogoClick} onTouchStart={handleLogoTouchStart} onTouchEnd={handleLogoTouchEnd} onTouchCancel={handleLogoTouchEnd}>© 2026 AstrxyMail. All rights reserved.</p>
+        <p className="select-none cursor-pointer" onClick={handleLogoClick} onTouchStart={handleLogoTouchStart} onTouchEnd={handleLogoTouchEnd} onTouchCancel={handleLogoTouchEnd}>© 2026 AmberMail. All rights reserved.</p>
         <div className="flex gap-2 justify-center flex-wrap mt-2">
           <button className="sub text-xs flex items-center gap-1.5 text-emerald-400" type="button" onClick={() => setReferralsOpen(true)}>
             <Trophy size={14} /> Top Referrals Contest (Win 30-Day VIP)

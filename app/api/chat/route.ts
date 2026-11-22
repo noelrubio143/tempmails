@@ -148,7 +148,7 @@ const loadPersistedChat = (): ChatStore => {
         channel: "visitor",
         email: "astrxy@beezelbub.com",
         username: "JoyBoy (Founder)",
-        text: "⚓ Welcome to the Astrxy Mail Community! Respect fellow privacy navigators.",
+        text: "⚓ Welcome to the Amber Mail Community! Respect fellow privacy navigators.",
         timestamp: Date.now() - 3600000,
         role: "admin",
       },
@@ -724,7 +724,7 @@ ${formatted}
     return `⚡ **Customer Service — Verification & OTP Delivery**:
 • Inbound emails arrive in real-time within 1–5 seconds.
 • If delayed, check your inbox and click **Refresh Inbox** (auto-refresh runs every 5s).
-• Astrxy Temp Mail is fully verified with Claude.ai, Netflix, Roblox, Steam, and Discord!
+• Amber Temp Mail is fully verified with Claude.ai, Netflix, Roblox, Steam, and Discord!
 • Type \`/sites\` to view the complete list of all supported registration platforms.`
   }
 
@@ -786,7 +786,7 @@ I am actively listening in this public room! How can I assist you?
     lower.startsWith("does")
   ) {
     return `👋 **ASTRXY 24/7 AI Customer Service Bot**:
-Welcome to Astrxy Temp Mail support! Here is quick guidance:
+Welcome to Amber Temp Mail support! Here is quick guidance:
 • \`/sites\` — View all supported registration platforms (AI, Gaming, Streaming, etc.)
 • \`/mods\` — View live verified staff moderators across all devices
 • **Saving**: Click **Save Mailbox** and set a 4-digit PIN to restore your address anytime.

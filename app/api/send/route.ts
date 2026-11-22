@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
   if (process.env.DISCORD_WEBHOOK_URL) {
     const safeSnippet = text.slice(0, 700) || "No body content."
-    await fetch(process.env.DISCORD_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "AstrxyMail Relay", embeds: [{ title: "Outgoing email dispatched", color: 16349462, fields: [{ name: "Mailbox", value: mailbox || "Not provided", inline: true }, { name: "Recipient", value: to, inline: true }, { name: "Subject", value: subject }, { name: "Content", value: safeSnippet }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
+    await fetch(process.env.DISCORD_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "AmberMail Relay", embeds: [{ title: "Outgoing email dispatched", color: 16349462, fields: [{ name: "Mailbox", value: mailbox || "Not provided", inline: true }, { name: "Recipient", value: to, inline: true }, { name: "Subject", value: subject }, { name: "Content", value: safeSnippet }], timestamp: new Date().toISOString() }] }) }).catch(() => undefined)
   }
   return NextResponse.json({ ok: true, id: resendData.id ?? null })
 }

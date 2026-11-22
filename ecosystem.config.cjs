@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "astrxymail",
+      name: "ambermail",
       script: "pnpm",
       args: "start -p 3000",
       cwd: __dirname,

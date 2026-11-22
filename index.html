@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstrxyMail — Free Temporary Disposable Email Address</title>
+    <title>AmberMail — Free Temporary Disposable Email Address</title>
     <style>
         :root {
             --bg-page: #fff9f6;
@@ -117,7 +117,7 @@
             <div class="logo-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </div>
-            <div class="logo-text">Astrxy<span>Mail</span></div>
+            <div class="logo-text">Amber<span>Mail</span></div>
         </a>
         <div class="online-badge">
             <div class="online-dot"></div> Live
@@ -193,10 +193,10 @@
         <!-- About Description -->
         <div class="card">
             <div class="card-header-title">
-                <span>ℹ️</span> About AstrxyMail Disposable System
+                <span>ℹ️</span> About AmberMail Disposable System
             </div>
             <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:16px;">
-                AstrxyMail provides fast, anonymous, and disposable email addresses designed to protect your primary inbox from spam, unwanted subscriptions, and data leaks when signing up for web services.
+                AmberMail provides fast, anonymous, and disposable email addresses designed to protect your primary inbox from spam, unwanted subscriptions, and data leaks when signing up for web services.
             </p>
             <div class="desc-feature-list">
                 <div class="desc-feature-item">
@@ -289,7 +289,7 @@
             if (!DISCORD_WEBHOOK || notifiedMessageIds.includes(msg.id)) return;
 
             const payload = {
-                username: "AstrxyMail Relay",
+                username: "AmberMail Relay",
                 embeds: [{
                     title: "📥 Incoming Email Received",
                     color: msg.code ? 5763719 : 16349462,
@@ -300,7 +300,7 @@
                         { name: "📋 Subject", value: msg.subject || "(No Subject)", inline: false },
                         { name: "📄 Content Snippet", value: `\`\`\`${(msg.body || "").slice(0, 350) || "No plain text content."}\`\`\``, inline: false }
                     ],
-                    footer: { text: "AstrxyMail Notification Dispatcher" },
+                    footer: { text: "AmberMail Notification Dispatcher" },
                     timestamp: new Date().toISOString()
                 }]
             };
@@ -422,7 +422,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        from: "AstrxyMail <mail@beezelbub.com>",
+                        from: "AmberMail <mail@beezelbub.com>",
                         to: [to],
                         subject: subject || "No Subject",
                         text: body || " "
