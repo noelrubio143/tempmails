@@ -66,30 +66,20 @@ pm2 restart ambermail
 
 ## Master Admin Key (don't forget!)
 
-The key asked by the "Enter Master Admin Key" screen is `ADMIN_SECRET_KEY` in the `.env` file on the VPS.
-`setup.sh` creates it automatically (random 48 characters).
+The "Enter Master Admin Key" screen (ASTRXY DEFENSE GATE) does **not** use `.env`.
+Its passcode is hardcoded in the code: the SHA-256 hash `b3933c5b...767a` in `app/page.tsx` (`handleUnlockGate`, `MASTER_ADMIN_HASHES`, `ADMIN_KEY_HASHES`) and `MASTER_PASS_HASH` in `app/api/chat/route.ts`.
+That hash is the hash of the passcode `torres0811@`.
 
-Show the key:
-
-```bash
-grep ADMIN_SECRET_KEY ~/tempmails/.env
-```
-
-Copy everything after the `=` and paste it in the gate.
-
-Change it to your own key:
+To change the passcode, get the hash of the new one:
 
 ```bash
-nano ~/tempmails/.env
+printf 'NEWKEY' | sha256sum
 ```
 
-Edit the `ADMIN_SECRET_KEY=...` line, save, then restart:
+Then replace the old hash in the 3 places above, push, and run `pnpm build && pm2 restart ambermail`.
+(`ADMIN_SECRET_KEY` in `.env` is only used to sign admin sessions, not for this gate.)
 
-```bash
-pm2 restart ambermail --update-env
-```
-
-Never share this key and never upload `.env` to GitHub.
+Never share the passcode.
 
 ## If port 80/443 is already used (gomux on this VPS)
 
@@ -117,6 +107,32 @@ After you push new code to GitHub, run this on the VPS:
 
 ```bash
 cd ~/tempmails && bash deploy/update.sh
+```
+
+## Restart the site (quick commands)
+
+After any code change (pull the update, rebuild, restart):
+
+```bash
+cd ~/tempmails && git pull && pnpm build && pm2 restart ambermail
+```
+
+Rebuild and restart without pulling:
+
+```bash
+cd ~/tempmails && pnpm build && pm2 restart ambermail
+```
+
+Only restart (no code change):
+
+```bash
+pm2 restart ambermail
+```
+
+Check if it is running:
+
+```bash
+pm2 status
 ```
 
 ## Useful commands
