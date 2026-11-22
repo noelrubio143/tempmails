@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
 import os from "os"
+import type { StoredEmailMessage } from "../../../lib/inbox-store"
+import { getMessagesStore, savePersistedMessages } from "../../../lib/inbox-store"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -29,24 +31,6 @@ function isMasterPass(pass?: string | null): boolean {
 const DISCORD_WEBHOOK_URL =
   ""
 
-export interface StoredEmailMessage {
-  id: string
-  from: string
-  sender: string
-  senderName?: string
-  to: string
-  recipient: string
-  subject: string
-  body: string
-  html?: string
-  date: string
-  time: string
-  timestamp: number
-  attachments?: unknown[]
-  otpCode?: string
-  verifyLink?: string
-}
-
 interface ClaimedEntry {
   email: string
   claimedAt: number
@@ -54,7 +38,6 @@ interface ClaimedEntry {
 }
 
 const CLAIMS_FILE = path.join(os.tmpdir(), "ast_claimed_emails_v2.json")
-const MESSAGES_FILE = path.join(os.tmpdir(), "ast_inbox_messages_v2.json")
 
 const loadPersistedClaims = (): Map<string, ClaimedEntry> => {
   const map = new Map<string, ClaimedEntry>()
@@ -91,39 +74,10 @@ const savePersistedClaims = (map: Map<string, ClaimedEntry>) => {
   } catch {}
 }
 
-const loadPersistedMessages = (): Map<string, StoredEmailMessage[]> => {
-  const map = new Map<string, StoredEmailMessage[]>()
-  try {
-    if (fs.existsSync(MESSAGES_FILE)) {
-      const content = fs.readFileSync(MESSAGES_FILE, "utf-8")
-      const parsed = JSON.parse(content) as Record<string, StoredEmailMessage[]>
-      if (parsed && typeof parsed === "object") {
-        for (const [em, msgs] of Object.entries(parsed)) {
-          if (Array.isArray(msgs)) {
-            map.set(em.toLowerCase().trim(), msgs)
-          }
-        }
-      }
-    }
-  } catch {}
-  return map
-}
-
-const savePersistedMessages = (map: Map<string, StoredEmailMessage[]>) => {
-  try {
-    const obj: Record<string, StoredEmailMessage[]> = {}
-    for (const [em, msgs] of map.entries()) {
-      obj[em] = msgs.slice(-50)
-    }
-    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(obj), "utf-8")
-  } catch {}
-}
-
 const getRedisClient = async (): Promise<any> => null // Upstash removed
 
 const g = globalThis as unknown as {
   __ast_claimed_emails_map?: Map<string, ClaimedEntry>
-  __ast_messages_store_map?: Map<string, StoredEmailMessage[]>
 }
 
 const getClaimsMap = (): Map<string, ClaimedEntry> => {
@@ -136,13 +90,6 @@ const getClaimsMap = (): Map<string, ClaimedEntry> => {
   }
   g.__ast_claimed_emails_map = fromDisk
   return fromDisk
-}
-
-const getMessagesStore = (): Map<string, StoredEmailMessage[]> => {
-  if (!g.__ast_messages_store_map) {
-    g.__ast_messages_store_map = loadPersistedMessages()
-  }
-  return g.__ast_messages_store_map
 }
 
 function serverExtractOtp(subject: string, content: string): string | undefined {

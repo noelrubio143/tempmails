@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
-import { getMessagesStore, StoredEmailMessage, getDiskMessages } from "../inbox/route"
+import type { StoredEmailMessage } from "../../../lib/inbox-store"
+import { getMessagesStore, getDiskMessages } from "../../../lib/inbox-store"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
